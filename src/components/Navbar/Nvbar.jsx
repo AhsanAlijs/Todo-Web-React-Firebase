@@ -13,13 +13,28 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import { useNavigate } from 'react-router-dom';
-
-const pages = ['home', 'register', 'login'];
+import { signOut } from "firebase/auth";
+import { auth } from '../../config/firebase/FirebaseConfig'
+import UserContext from '../../context/user/userContext';
 const settings = ['home', 'register', 'login'];
 
 function ResponsiveAppBar() {
     const [anchorElNav, setAnchorElNav] = React.useState(null);
     const [anchorElUser, setAnchorElUser] = React.useState(null);
+
+    const { isUser , setIsUser } = React.useContext(UserContext);
+
+    let pages = ['home', 'register', 'login', 'logout'];
+
+    if (isUser) {
+        pages = ['home', 'logout']
+    } else {
+        pages = ['home', 'register', 'login']
+    }
+
+
+
+
 
     // Use Navigate
 
@@ -36,6 +51,16 @@ function ResponsiveAppBar() {
         setAnchorElNav(null);
         // console.log('btn Clicked', page);
         page === 'home' ? navigate(`/`) : navigate(`/${page}`)
+
+        if (page === 'logout') {
+            signOut(auth).then(() => {
+                navigate('/login')
+                setIsUser(false)
+            }).catch((error) => {
+                console.log(error);
+            });
+            return
+        }
     };
 
     const handleCloseUserMenu = () => {
