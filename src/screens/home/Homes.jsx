@@ -1,12 +1,39 @@
-import { Box, Button, TextField } from '@mui/material'
-import React, { useRef, useState } from 'react'
-import { collection, addDoc } from "firebase/firestore"
+import { Box, Button, TextField, Typography } from '@mui/material'
+import React, { useEffect, useRef, useState } from 'react'
+import { collection, addDoc, getDocs, updateDoc, deleteDoc, doc } from "firebase/firestore"
 import { db } from "../../config/firebase/FirebaseConfig"
+import BasicCard from '../../components/card/Cards'
 
 const Homes = () => {
 
     const todo = useRef();
-    const [daat, setData] = useState([]);
+    const [data, setData] = useState([]);
+
+    useEffect(() => {
+
+        async function getDataFromFirestore() {
+            const querySnapshot = await getDocs(collection(db, "todo"));
+            querySnapshot.forEach((doc) => {
+                console.log(doc.data());
+                const obj = {
+                    docId: doc.id,
+                    ...doc.data()
+                }
+                console.log(obj);
+                data.push(obj);
+                setData([...data]);
+            });
+        }
+
+        getDataFromFirestore()
+
+
+    }, [])
+
+
+
+
+
 
     const addTodo = async (e) => {
         e.preventDefault()
@@ -26,6 +53,41 @@ const Homes = () => {
 
     }
 
+    const editTodo = async (index, editedValue) => {
+        console.log(`todo index is ${index} and value is ${editedValue}`);
+        const updatedTodo = doc(db, "todo", data[index].docId);
+        updateDoc(updatedTodo, {
+            todo: editedValue
+        }).then(() => {
+            data.splice(index, 1, {
+                todo: editedValue
+            })
+            setData([...data]);
+        })
+
+
+    }
+
+    const deleteTodo = async (index) => {
+        console.log('todo deleted', index);
+        await deleteDoc(doc(db, "todo", data[index].docId));
+        data.splice(index, 1);
+        setData([...data]);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     return (
 
@@ -36,6 +98,10 @@ const Homes = () => {
                     <Button variant="contained" type='submit'>Contained</Button>
                 </form>
             </Box>
+
+            {data.length > 0 ? data.map((item, index) => {
+                return <BasicCard key={index} title={item.todo} editTodo={editTodo} deleteTodo={() => deleteTodo(index)} index={index} />
+            }) : <Typography variant="h5" color="initial" className='text-center'>No item found</Typography>}
         </>
     )
 }
