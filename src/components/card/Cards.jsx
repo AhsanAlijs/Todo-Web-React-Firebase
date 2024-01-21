@@ -7,6 +7,8 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { useState } from 'react';
 import { useRef } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faFloppyDisk, faPenToSquare, faTrashCan } from '@fortawesome/free-solid-svg-icons';
 
 const bull = (
     <Box
@@ -35,12 +37,12 @@ export default function BasicCard({ title, editTodo, deleteTodo, index }) {
                         </Typography>
                     </CardContent>
                     <CardActions>
-                        <Button size="small" onClick={deleteTodo}>Delete</Button>
-                        <Button size="small" onClick={() => setShowTodo(false)}>Edit</Button>
+                        <Button size="small" onClick={deleteTodo}><FontAwesomeIcon icon={faTrashCan} size="2xl" /></Button>
+                        <Button size="small" onClick={() => setShowTodo(false)}><FontAwesomeIcon icon={faPenToSquare} size="2xl" /></Button>
                     </CardActions>
                 </div> : <div>
                     <input type="text" placeholder='edited value' ref={editedValue} />
-                    <button onClick={editedTodoFunc}>save</button>
+                    <button onClick={editedTodoFunc}><FontAwesomeIcon icon={faFloppyDisk} size="xl" /></button>
                 </div>
             }
 

@@ -3,6 +3,8 @@ import React, { useEffect, useRef, useState } from 'react'
 import { collection, addDoc, getDocs, updateDoc, deleteDoc, doc } from "firebase/firestore"
 import { db } from "../../config/firebase/FirebaseConfig"
 import BasicCard from '../../components/card/Cards'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faSquarePlus } from '@fortawesome/free-solid-svg-icons'
 
 const Homes = () => {
 
@@ -25,8 +27,8 @@ const Homes = () => {
             });
         }
 
-        getDataFromFirestore()
 
+        getDataFromFirestore()
 
     }, [])
 
@@ -46,7 +48,7 @@ const Homes = () => {
                 todo: todo.current.value,
             });
             console.log("Document written with ID: ", docRef.id);
-            todo.current.value = ''
+            todo.current.value = '';
         } catch (e) {
             console.error("Error adding document: ", e);
         }
@@ -95,13 +97,15 @@ const Homes = () => {
             <Box className='d-flex justify-content-center flex-column align-items-center gap-5      '>
                 <form onSubmit={addTodo} className='d-flex justify-content-center mt-5 flex-column w-25 gap-3'>
                     <TextField id="filled-basic" label="Todo" variant="filled" required inputRef={todo} /> <br />
-                    <Button variant="contained" type='submit'>Contained</Button>
+                    <Button variant="contained" type='submit'><FontAwesomeIcon icon={faSquarePlus} size="2xl" /></Button>
                 </form>
             </Box>
 
-            {data.length > 0 ? data.map((item, index) => {
-                return <BasicCard key={index} title={item.todo} editTodo={editTodo} deleteTodo={() => deleteTodo(index)} index={index} />
-            }) : <Typography variant="h5" color="initial" className='text-center'>No item found</Typography>}
+            <div>
+                {data.length > 0 ? data.map((item, index) => {
+                    return <BasicCard key={index} title={item.todo} editTodo={editTodo} deleteTodo={() => deleteTodo(index)} index={index} />
+                }) : <Typography variant="h5" color="initial" className='text-center mt-25'>No item found</Typography>}
+            </div>
         </>
     )
 }
